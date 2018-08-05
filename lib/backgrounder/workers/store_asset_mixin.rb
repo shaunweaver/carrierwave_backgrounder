@@ -3,6 +3,7 @@ module CarrierWave
   module Workers
 
     module StoreAssetMixin
+      require 'open-uri'
       include CarrierWave::Workers::Base
 
       def self.included(base)
@@ -33,7 +34,8 @@ module CarrierWave
       def store_directories(record)
         asset, asset_tmp = record.send(:"#{column}"), record.send(:"#{column}_tmp")
         cache_directory  = File.expand_path(asset.cache_dir, asset.root)
-        @cache_path      = File.join(cache_directory, asset_tmp)
+        # XXX Hardcoded our path here... not ideal..
+        @cache_path      = open("https://s3-us-west-1.amazonaws.com/edealer/uploads/tmp/#{asset_tmp}")
         @tmp_directory   = File.join(cache_directory, asset_tmp.split("/").first)
       end
 
